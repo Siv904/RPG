@@ -513,32 +513,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 2
-  maxHealth: 5
+  maxHealth: 3
   bulletPrefab: {fileID: 8067255063110667310, guid: 2ae4a44804602a140ab9edb8f46ba838, type: 3}
   bulletPoint: {fileID: 909493333}
   bulletAttackRate: 1
   nextBulletAttackTime: 0
-  health: 5
-  canShootBullets: 0
+  health: 3
+  canShootBullets: 1
   maxDistanceFromPlayer: 5
   minDistanceFromPlayer: 3
   retreatSpeed: 2
   shootingDelayTime: 2
-  phase1MoveSpeed: 2
-  phase1BulletAttackRate: 1
-  phase1HealthThreshold: 0.5
-  phase2MoveSpeed: 3
-  phase2BulletAttackRate: 2
-  phase2HealthThreshold: 0.5
-  phase3MoveSpeed: 3
-  phase3BulletAttackRate: 2
-  phase3HealthThreshold: 0.5
-  phase4MoveSpeed: 3
-  phase4BulletAttackRate: 2
-  phase4HealthThreshold: 0.5
-  phase5MoveSpeed: 3
-  phase5BulletAttackRate: 2
-  phase5HealthThreshold: 0.5
+  healthThresholdPhase2: 0.5
+  healthThresholdPhase3: 0.2
+  currentPhase: 1
+  SceneName: End Cutscene
 --- !u!60 &751678078
 PolygonCollider2D:
   m_ObjectHideFlags: 0

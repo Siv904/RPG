@@ -1,16 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyController : MonoBehaviour
 {
     public float moveSpeed = 2f;
-    public int maxHealth = 5;
+    public int maxHealth = 10;
     public GameObject bulletPrefab;
     public Transform bulletPoint;
     public float bulletAttackRate = 1f;
     public float nextBulletAttackTime = 0f;
-    public int health = 5;
+    public int health = 10;
     public bool canShootBullets = true;
 
     // Boss movement
@@ -29,40 +29,23 @@ public class EnemyController : MonoBehaviour
     public float shootingDelayTime = 2f;
     private bool isShootingDelayed = false;
 
-    // Phase 1
-    public float phase1MoveSpeed = 2f;
-    public float phase1BulletAttackRate = 1f;
-    public float phase1HealthThreshold = 0.5f;
+    // Phase control
+    public float healthThresholdPhase2 = 0.5f;
+    public float healthThresholdPhase3 = 0.2f;
 
-    // Phase 2
-    public float phase2MoveSpeed = 3f;
-    public float phase2BulletAttackRate = 2f;
-    public float phase2HealthThreshold = 0.5f;
+    public int currentPhase = 1;
 
-    // Phase 3
-    public float phase3MoveSpeed = 3f;
-    public float phase3BulletAttackRate = 2f;
-    public float phase3HealthThreshold = 0.5f;
-
-    // Phase 4
-    public float phase4MoveSpeed = 3f;
-    public float phase4BulletAttackRate = 2f;
-    public float phase4HealthThreshold = 0.5f;
-
-    // Phase 5
-    public float phase5MoveSpeed = 3f;
-    public float phase5BulletAttackRate = 2f;
-    public float phase5HealthThreshold = 0.5f;
-
-    // Current Phase
-    private int currentPhase = 1;
-    private float currentHealth;
+    // End scene
+    public string SceneName;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         playerController = player.GetComponent<PlayerController>();
+        health = maxHealth;
+        canShootBullets = false;
+        StartCoroutine(EnableBulletShooting());
     }
 
     void Update()
@@ -80,34 +63,39 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        // Check if the boss should transition to a new phase
-        if (currentPhase == 1 && currentHealth <= phase1HealthThreshold)
+        // Check for phase transitions
+        if (currentPhase == 1)
         {
-            currentPhase = 2;
-            // Transition to phase 2
-            if (currentPhase == 2 && currentHealth <= phase2HealthThreshold)
+            // Boss behavior for phase 1
+            if (health <= healthThresholdPhase2)
             {
-                currentPhase = 3;
-                // Transition to phase 3
-                if (currentPhase == 3 && currentHealth <= phase3HealthThreshold)
-                {
-                    currentPhase = 4;
-                    // Transition to phase 4
-                    if (currentPhase == 4 && currentHealth <= phase4HealthThreshold)
-                    {
-                        currentPhase = 5;
-                        // Transition to phase 5
-
-                    }
-                }
+                // Transition to phase 2
+                currentPhase = 2;
+                moveSpeed = 7f;
+                bulletAttackRate = 2f;
+                Debug.Log("Transitioning to phase 2");
             }
         }
-
+        else if (currentPhase == 2)
+        {
+            // Boss behavior for phase 2
+            if (health <= healthThresholdPhase3)
+            {
+                // Transition to phase 3
+                currentPhase = 3;
+                moveSpeed = 9f;
+                bulletAttackRate = 3f;
+            }
+        }
+        else if (currentPhase == 3)
+        {
+            // Boss behavior for phase 3
+        }
     }
+
 
     void FixedUpdate()
     {
-
         // Boss movement
         float distanceFromPlayer = Vector2.Distance(transform.position, player.position);
         if (distanceFromPlayer > maxDistanceFromPlayer)
@@ -129,36 +117,12 @@ public class EnemyController : MonoBehaviour
         {
             rb.MovePosition(rb.position + retreatDirection * retreatSpeed * Time.fixedDeltaTime);
         }
+    }
 
-        // Phase 1
-        if (currentPhase == 1)
-        {
-
-        }
-
-        // Phase 2
-        if (currentPhase == 2)
-        {
-
-        }
-
-        // Phase 3
-        if (currentPhase == 3)
-        {
-
-        }
-
-        // Phase 4
-        if (currentPhase == 4)
-        {
-
-        }
-
-        // Phase 5
-        if (currentPhase == 5)
-        {
-
-        }
+    IEnumerator EnableBulletShooting()
+    {
+        yield return new WaitForSeconds(3f);
+        canShootBullets = true;
     }
 
     void Attack()
@@ -185,6 +149,7 @@ public class EnemyController : MonoBehaviour
     {
         // Destroy the enemy
         Destroy(gameObject);
+        SceneManager.LoadScene(SceneName);
     }
 
     // Method called when the player dies
